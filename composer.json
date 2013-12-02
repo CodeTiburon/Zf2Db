@@ -13,7 +13,6 @@
             "role": "Master"
         }
     ],
-	"target-dir": "Ct/Zf2Db",
     "require": {
         "php": ">=5.3.3"
     },
