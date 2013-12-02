@@ -1,7 +1,6 @@
 <?php
-namespace CT\Common;
+namespace Zf2Db;
 
-use CT\Common\Permissions\Acl\AclListener;
 use Zend\Mvc\ModuleRouteListener;
 
 class Module
@@ -11,9 +10,6 @@ class Module
         $app = $event->getApplication();
         $events = $app->getEventManager();
         $services = $app->getServiceManager();
-
-        $events->attach(new ModuleRouteListener());
-        $events->attach($services->get('AclListener'));
     }
 
     public function getConfig()
