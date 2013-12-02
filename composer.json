@@ -1,0 +1,28 @@
+{
+    "name": "codetiburon/zf2-db",
+    "description": "Zend Framework 2 database mapper, model, service",
+    "type": "library",
+    "keywords": ["db","mapper","service","database","zf2"],
+    "homepage": "https://github.com/CodeTiburon/zf2-db",
+    "license": "New BSD License",
+    "authors": [
+        {
+            "name": "codetiburon",
+            "email": "",
+            "homepage": "http://www.codetiburon.com",
+            "role": "Master"
+        }
+    ],
+	"target-dir": "Ct/Zf2Db",
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "Zf2Db": "src/"
+        },
+        "classmap": [
+            "Module.php"
+        ]
+    }
+}
