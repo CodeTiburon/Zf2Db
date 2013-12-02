@@ -1,6 +1,6 @@
 <?php
 
-namespace CT\Zf2Db\Service;
+namespace Zf2Db\Service;
 
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

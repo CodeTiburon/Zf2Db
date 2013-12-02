@@ -4,7 +4,7 @@
  * Company: CodeTiburon
  * Last Edited: 15.06.2013
  */
-namespace CT\Zf2Db\Mapper;
+namespace Zf2Db\Mapper;
 
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Adapter\Adapter;
