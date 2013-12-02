@@ -2,7 +2,7 @@
 /**
  * Edited by Nickolay U. Kofanov 07.06.2013
  */
-namespace CT\Zf2Db\Model;
+namespace Zf2Db\Model;
 
 abstract class AbstractModel
 {
