@@ -14,16 +14,24 @@ class Module
 
     public function getConfig()
     {
-        return include __DIR__ . '/config/module.config.php';
+        $result = array();
+
+        $configs = glob(__DIR__ . '/config/*.config.php');
+
+        foreach ($configs as $config) {
+            if (file_exists($config)) {
+                $result = array_merge($result, include_once($config));
+            }
+        }
+
+        return $result;
     }
 
     public function getAutoloaderConfig()
     {
         return array(
-            'Zend\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
+            'Zend\Loader\ClassMapAutoloader' => array(
+                __DIR__ . '/autoload_classmap.php',
             ),
         );
     }
