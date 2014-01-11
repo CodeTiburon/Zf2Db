@@ -6,13 +6,13 @@
  */
 namespace Zf2Db\Mapper;
 
-use Zend\Db\TableGateway\AbstractTableGateway;
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\Adapter\AdapterAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\Sql\Where;
+use \Zend\Db\TableGateway\AbstractTableGateway;
+use \Zend\Db\Adapter\Adapter;
+use \Zend\Db\Adapter\AdapterAwareInterface;
+use \Zend\ServiceManager\ServiceLocatorAwareInterface;
+use \Zend\ServiceManager\ServiceLocatorInterface;
+use \Zend\Db\ResultSet\ResultSet;
+use \Zend\Db\Sql\Where;
 
 abstract class AbstractMapper extends AbstractTableGateway
     implements AdapterAwareInterface, ServiceLocatorAwareInterface
@@ -148,5 +148,45 @@ abstract class AbstractMapper extends AbstractTableGateway
             }
         }
         return parent::__call($method, $args);
+    }
+
+    /**
+     * @param $table
+     * @param array $data
+     * @return bool
+     */
+    protected function multiInsert($table, array $data)
+    {
+        if (count($data)) {
+            $columns = (array)current($data);
+            $columns = array_keys($columns);
+            $columnsCount = count($columns);
+            $platform = $this->adapter->getPlatform();
+
+            array_filter(
+                $columns,
+                function (&$item) use ($platform) {
+                    $item = $platform->quoteIdentifier($item);
+                }
+            );
+            $columns = "(" . implode(',', $columns) . ")";
+
+            $placeholder = array_fill(0, $columnsCount, '?');
+            $placeholder = "(" . implode(',', $placeholder) . ")";
+            $placeholder = implode(',', array_fill(0, count($data), $placeholder));
+
+            $values = array();
+            foreach ($data as $row) {
+                foreach ($row as $value) {
+                    $values[] = $value;
+                }
+            }
+
+            $table = $platform->quoteIdentifier($table);
+            $q = sprintf('INSERT INTO %s %s VALUES %s', $table, $columns, $placeholder);
+            return $this->adapter->query($q)->execute($values);
+        }
+
+        return false;
     }
 }

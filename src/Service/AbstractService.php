@@ -2,10 +2,10 @@
 
 namespace Zf2Db\Service;
 
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Db\ResultSet\ResultSet;
-use Zend\Db\Adapter\Driver\ResultInterface;
+use \Zend\ServiceManager\ServiceLocatorAwareInterface;
+use \Zend\ServiceManager\ServiceLocatorInterface;
+use \Zend\Db\ResultSet\ResultSet;
+use \Zend\Db\Adapter\Driver\ResultInterface;
 
 abstract class AbstractService implements ServiceLocatorAwareInterface
 {
