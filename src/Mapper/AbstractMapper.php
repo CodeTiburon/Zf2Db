@@ -155,7 +155,7 @@ abstract class AbstractMapper extends AbstractTableGateway
      * @param array $data
      * @return bool
      */
-    protected function multiInsert($table, array $data)
+    protected function multiInsert ($table, array $data)
     {
         if (count($data)) {
             $columns = (array)current($data);
@@ -188,5 +188,45 @@ abstract class AbstractMapper extends AbstractTableGateway
         }
 
         return false;
+    }
+
+    /**
+     * @param       $where
+     * @param array $order
+     *
+     * @return null|\Zend\Db\ResultSet\ResultSetInterface
+     */
+    public function getItems ($where, $order = [])
+    {
+        $select = $this->getSql()->select();
+
+        if (!empty($where)) {
+            $select->where($where);
+        }
+        if (!empty($order)) {
+            $select->order($order);
+        }
+
+        return $this->selectWith($select);
+    }
+
+    /**
+     * @param $where
+     *
+     * @return mixed
+     */
+    public function getItem ($where)
+    {
+        return $this->getItems($where)->current();
+    }
+
+    /**
+     * @param $where
+     *
+     * @return int
+     */
+    public function deleteItem ($where)
+    {
+        return $this->delete($where);
     }
 }
