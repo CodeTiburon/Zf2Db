@@ -213,16 +213,6 @@ abstract class AbstractMapper extends AbstractTableGateway
     /**
      * @param $where
      *
-     * @return mixed
-     */
-    public function getItem ($where)
-    {
-        return $this->getItems($where)->current();
-    }
-
-    /**
-     * @param $where
-     *
      * @return int
      */
     public function deleteItem ($where)
