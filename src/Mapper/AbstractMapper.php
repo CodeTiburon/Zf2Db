@@ -100,7 +100,7 @@ abstract class AbstractMapper extends AbstractTableGateway
      *
      * @return null|\Zend\Db\ResultSet\ResultSetInterface
      */
-    public function getItems ($where, $columns = ['*'], $order = [])
+    public function getItems ($where, $columns = array('*'), $order = array())
     {
         $select = $this->getSql()->select();
 
