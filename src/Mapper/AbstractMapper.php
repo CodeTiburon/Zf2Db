@@ -94,6 +94,29 @@ abstract class AbstractMapper extends AbstractTableGateway
     }
 
     /**
+     * @param       $where
+     * @param array $columns
+     * @param array $order
+     *
+     * @return null|\Zend\Db\ResultSet\ResultSetInterface
+     */
+    public function getItems ($where, $columns = ['*'], $order = [])
+    {
+        $select = $this->getSql()->select();
+
+        if (!empty($where)) {
+            $select->where($where);
+        }
+        if (!empty($order)) {
+            $select->order($order);
+        }
+
+        $select->columns($columns);
+
+        return $this->selectWith($select);
+    }
+
+    /**
      * Get row count in the table
      *
      * @param  Where|\Closure|string|array|\Zend\Db\Sql\Predicate\PredicateInterface $where
@@ -188,29 +211,6 @@ abstract class AbstractMapper extends AbstractTableGateway
         }
 
         return false;
-    }
-
-    /**
-     * @param       $where
-     * @param array $order
-     * @param array $columns
-     *
-     * @return null|\Zend\Db\ResultSet\ResultSetInterface
-     */
-    public function getItems ($where, $order = [], $columns=['*'])
-    {
-        $select = $this->getSql()->select();
-
-        if (!empty($where)) {
-            $select->where($where);
-        }
-        if (!empty($order)) {
-            $select->order($order);
-        }
-
-        $select->columns($columns);
-
-        return $this->selectWith($select);
     }
 
     /**
