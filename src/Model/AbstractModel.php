@@ -44,6 +44,6 @@ function __getArrayCopy($obj)
 function __exchangeArray($obj, $arr)
 {
     foreach($obj as $key => $val) {
-        $obj->$key = isset($arr[$key]) ? $arr[$key] : null;
+        $obj->$key = isset($arr[$key]) ? $arr[$key] : $obj->$key;
     }
 }
