@@ -13,6 +13,7 @@ use \Zend\ServiceManager\ServiceLocatorAwareInterface;
 use \Zend\ServiceManager\ServiceLocatorInterface;
 use \Zend\Db\ResultSet\ResultSet;
 use \Zend\Db\Sql\Where;
+use \Zend\Db\Adapter\Platform\Mysql;
 
 abstract class AbstractMapper extends AbstractTableGateway
     implements AdapterAwareInterface, ServiceLocatorAwareInterface
@@ -26,16 +27,16 @@ abstract class AbstractMapper extends AbstractTableGateway
      * @var string
      */
     protected $model = 'Zend\Stdlib\ArrayObject';
-    
+
     /**
      * Set db adapter
      *
      * @param Adapter $adapter
      * @return AdapterAwareInterface
      */
-	public function setDbAdapter(Adapter $adapter)
-	{
-		$this->adapter = $adapter;
+    public function setDbAdapter(Adapter $adapter)
+    {
+        $this->adapter = $adapter;
 
         if (is_string($this->model)) {
             $class = $this->model;
@@ -48,8 +49,8 @@ abstract class AbstractMapper extends AbstractTableGateway
         $this->resultSetPrototype = new ResultSet(ResultSet::TYPE_ARRAYOBJECT, $model);
 
         return $this;
-	}
-    
+    }
+
     /**
      * @return ServiceLocatorInterface
      */
@@ -67,7 +68,7 @@ abstract class AbstractMapper extends AbstractTableGateway
     {
         return $this->adapter ? $this->adapter->getDriver()->getConnection() : null ;
     }
-    
+
     /**
      * @param ServiceLocatorInterface $serviceLocator
      */
@@ -113,7 +114,9 @@ abstract class AbstractMapper extends AbstractTableGateway
 
         $select->columns($columns);
 
-        return $this->selectWith($select);
+        $query = $select->getSqlString(new Mysql($this->adapter->getDriver()));
+
+        return $this->adapter->query($query, Adapter::QUERY_MODE_EXECUTE);
     }
 
     /**
