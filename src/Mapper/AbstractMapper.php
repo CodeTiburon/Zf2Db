@@ -98,10 +98,11 @@ abstract class AbstractMapper extends AbstractTableGateway
      * @param       $where
      * @param array $columns
      * @param array $order
+     * @param string $group
      *
      * @return null|\Zend\Db\ResultSet\ResultSetInterface
      */
-    public function getItems ($where, $columns = array('*'), $order = array())
+    public function getItems ($where, $columns = array('*'), $order = array(), $group = '')
     {
         $select = $this->getSql()->select();
 
@@ -110,6 +111,9 @@ abstract class AbstractMapper extends AbstractTableGateway
         }
         if (!empty($order)) {
             $select->order($order);
+        }
+        if (!empty($group)) {
+            $select->group($group);
         }
 
         $select->columns($columns);
