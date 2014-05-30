@@ -6,6 +6,7 @@
  */
 namespace Zf2Db\Mapper;
 
+use \Zend\Db\Sql\Expression;
 use \Zend\Db\TableGateway\AbstractTableGateway;
 use \Zend\Db\Adapter\Adapter;
 use \Zend\Db\Adapter\AdapterAwareInterface;
@@ -131,13 +132,16 @@ abstract class AbstractMapper extends AbstractTableGateway
      */
     public function getRowCount($where = null)
     {
-        $select = $this->sql->select()->columns(array('n' => new SqlExpression('COUNT(*)')));
+        $select = $this->sql->select()->columns(array('n' => new Expression('COUNT(*)')));
         if ($where) {
             $select = $select->where($where);
         }
 
-        $result = $this->selectWith($select)->current();
-        return $result['n'];
+        $query = $select->getSqlString(new Mysql($this->adapter->getDriver()));
+        $result = $this->adapter->query($query, Adapter::QUERY_MODE_EXECUTE);
+        $result = $result->current();
+
+        return $result->n;
     }
 
     /**
