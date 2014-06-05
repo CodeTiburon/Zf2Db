@@ -130,9 +130,7 @@ abstract class AbstractMapper extends AbstractTableGateway
             $limit = ' LIMIT ' . $itemCount . ' OFFSET ' . $itemOffset;
         }
 
-        if (!empty($columns)) {
-            $select->columns($columns);
-        }
+        $select->columns(!empty($columns)?$columns:['*']);
 
         $query = $select->getSqlString($this->adapter->platform);
         $query .= !empty($limit) ? $limit : '';
