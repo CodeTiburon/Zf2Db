@@ -33,17 +33,17 @@ abstract class AbstractMapper extends AbstractTableGateway
      * Set db adapter
      *
      * @param Adapter $adapter
+     *
      * @return AdapterAwareInterface
      */
-    public function setDbAdapter(Adapter $adapter)
+    public function setDbAdapter (Adapter $adapter)
     {
         $this->adapter = $adapter;
 
         if (is_string($this->model)) {
             $class = $this->model;
             $model = new $class();
-        }
-        else {
+        } else {
             $model = $this->model;
         }
 
@@ -55,7 +55,7 @@ abstract class AbstractMapper extends AbstractTableGateway
     /**
      * @return ServiceLocatorInterface
      */
-    public function getServiceLocator()
+    public function getServiceLocator ()
     {
         return $this->serviceLocator;
     }
@@ -65,15 +65,15 @@ abstract class AbstractMapper extends AbstractTableGateway
      *
      * @return \Zend\Db\Adapter\Driver\ConnectionInterface|null
      */
-    public function getConnection()
+    public function getConnection ()
     {
-        return $this->adapter ? $this->adapter->getDriver()->getConnection() : null ;
+        return $this->adapter ? $this->adapter->getDriver()->getConnection() : null;
     }
 
     /**
      * @param ServiceLocatorInterface $serviceLocator
      */
-    public function setServiceLocator(ServiceLocatorInterface $serviceLocator)
+    public function setServiceLocator (ServiceLocatorInterface $serviceLocator)
     {
         $this->serviceLocator = $serviceLocator;
     }
@@ -83,12 +83,12 @@ abstract class AbstractMapper extends AbstractTableGateway
      *
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty ()
     {
         $result =
             $this->selectWith(
                 $this->sql->select()
-                    ->columns(array('n' => new SqlExpression('NULL')))
+                    ->columns(array('n' => new Expression('NULL')))
                     ->limit(1)
             )->current();
 
@@ -96,15 +96,24 @@ abstract class AbstractMapper extends AbstractTableGateway
     }
 
     /**
-     * @param       $where
-     * @param array $columns
-     * @param array $order
+     * @param        $where
+     * @param array  $columns
+     * @param array  $order
      * @param string $group
+     * @param int    $itemCount
+     * @param int    $itemOffset
      *
      * @return null|\Zend\Db\ResultSet\ResultSetInterface
      */
-    public function getItems ($where, $columns = array('*'), $order = array(), $group = '')
-    {
+    public function getItems (
+        $where,
+        $columns = array('*'),
+        $order = array(),
+        $group = '',
+        $itemCount = null,
+        $itemOffset = 0
+    ) {
+
         $select = $this->getSql()->select();
 
         if (!empty($where)) {
@@ -116,11 +125,14 @@ abstract class AbstractMapper extends AbstractTableGateway
         if (!empty($group)) {
             $select->group($group);
         }
-
+        $limit = '';
+        if (!empty($itemCount) && (!empty($itemOffset) || $itemOffset === 0)) {
+            $limit = ' LIMIT ' . $itemCount . ' OFFSET ' . $itemOffset;
+        }
         $select->columns($columns);
 
-        $query = $select->getSqlString(new Mysql($this->adapter->getDriver()));
-
+        $query = $select->getSqlString($this->adapter->platform);
+        $query .= !empty($limit) ? $limit : '';
         return $this->adapter->query($query, Adapter::QUERY_MODE_EXECUTE);
     }
 
@@ -128,9 +140,10 @@ abstract class AbstractMapper extends AbstractTableGateway
      * Get row count in the table
      *
      * @param  Where|\Closure|string|array|\Zend\Db\Sql\Predicate\PredicateInterface $where
+     *
      * @return mixed
      */
-    public function getRowCount($where = null)
+    public function getRowCount ($where = null)
     {
         $select = $this->sql->select()->columns(array('n' => new Expression('COUNT(*)')));
         if ($where) {
@@ -152,11 +165,12 @@ abstract class AbstractMapper extends AbstractTableGateway
      *   $table->findByTime('IN', 'SELECT * FROM Times', PredicateOperator::TYPE_SELECT);
      *
      * @param string $method
-     * @param array $args
+     * @param array  $args
+     *
      * @return mixed|ResultSet
      * @throws
      */
-    public function __call($method, $args)
+    public function __call ($method, $args)
     {
         if (strlen($method) > 6) {
             $func = strtolower($method);
@@ -173,8 +187,7 @@ abstract class AbstractMapper extends AbstractTableGateway
                     if (isset($args[2])) {
                         $predicate->setRightType($args[2]);
                     }
-                }
-                else {
+                } else {
                     $predicate->setRight($args[0]);
                 }
                 $where = new Where();
@@ -185,8 +198,9 @@ abstract class AbstractMapper extends AbstractTableGateway
     }
 
     /**
-     * @param $table
+     * @param       $table
      * @param array $data
+     *
      * @return bool
      */
     protected function multiInsert ($table, array $data)
