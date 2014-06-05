@@ -100,10 +100,12 @@ abstract class AbstractMapper extends AbstractTableGateway
      * @param array  $columns
      * @param array  $order
      * @param string $group
-     * @param int    $itemCount
+     * @param null   $itemCount
      * @param int    $itemOffset
+     * @param null   $having
+     * @param bool   $returnSelectObject
      *
-     * @return null|\Zend\Db\ResultSet\ResultSetInterface
+     * @return \Zend\Db\Sql\Select
      */
     public function getItems (
         $where,
@@ -111,7 +113,9 @@ abstract class AbstractMapper extends AbstractTableGateway
         $order = array(),
         $group = '',
         $itemCount = null,
-        $itemOffset = 0
+        $itemOffset = 0,
+        $having = null,
+        $returnSelectObject = false
     ) {
 
         $select = $this->getSql()->select();
@@ -125,16 +129,24 @@ abstract class AbstractMapper extends AbstractTableGateway
         if (!empty($group)) {
             $select->group($group);
         }
+        if (!empty($having)) {
+            $select->having($having);
+        }
+
         $limit = '';
         if (!empty($itemCount) && (!empty($itemOffset) || $itemOffset === 0)) {
             $limit = ' LIMIT ' . $itemCount . ' OFFSET ' . $itemOffset;
         }
 
-        $select->columns(!empty($columns)?$columns:['*']);
+        $select->columns(!empty($columns) ? $columns : ['*']);
 
-        $query = $select->getSqlString($this->adapter->platform);
-        $query .= !empty($limit) ? $limit : '';
-        return $this->adapter->query($query, Adapter::QUERY_MODE_EXECUTE);
+        if (!$returnSelectObject) {
+            $query = $select->getSqlString($this->adapter->platform);
+            $query .= !empty($limit) ? $limit : '';
+            return $this->adapter->query($query, Adapter::QUERY_MODE_EXECUTE);
+        }
+
+        return $select;
     }
 
     /**
