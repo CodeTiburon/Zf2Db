@@ -135,7 +135,7 @@ abstract class AbstractMapper extends AbstractTableGateway
 
         $limit = '';
         if (!empty($itemCount) && (!empty($itemOffset) || $itemOffset === 0)) {
-            $limit = ' LIMIT ' . $itemCount . ' OFFSET ' . $itemOffset;
+            $limit = vsprintf(' LIMIT %d OFFSET %d', [$itemCount, $itemOffset]);
         }
 
         $select->columns(!empty($columns) ? $columns : ['*']);
