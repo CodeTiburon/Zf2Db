@@ -4,15 +4,24 @@ namespace Zf2Db\Service;
 
 use \Zend\ServiceManager\ServiceLocatorAwareInterface;
 use \Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\EventManager;
 use \Zend\Db\ResultSet\ResultSet;
 use \Zend\Db\Adapter\Driver\ResultInterface;
 
-abstract class AbstractService implements ServiceLocatorAwareInterface
+abstract class AbstractService implements ServiceLocatorAwareInterface, EventManagerAwareInterface
 {
     /**
      * @var ServiceLocatorInterface
      */
     protected $serviceLocator;
+
+    /**
+     *
+     * @var EventManagerInterface
+     */
+    protected $eventManager;
 
     /**
      * @return ServiceLocatorInterface
@@ -45,5 +54,32 @@ abstract class AbstractService implements ServiceLocatorAwareInterface
         }
 
         return null;
+    }
+
+
+    /**
+     *
+     * @param EventManagerInterface $eventManager
+     */
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
+        $eventManager->addIdentifiers(array(
+            get_called_class()
+        ));
+
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     *
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        if (null === $this->eventManager) {
+            $this->setEventManager(new EventManager());
+        }
+
+        return $this->eventManager;
     }
 }
